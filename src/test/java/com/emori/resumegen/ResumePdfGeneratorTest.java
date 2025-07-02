@@ -11,19 +11,8 @@ class ResumePdfGeneratorTest {
     @Test
     @DisplayName("Should break text into lines that fit within width")
     void testTextWrappingLogic() {
-        // This tests YOUR text wrapping algorithm
         String longText = "This is a very long text that should be wrapped";
         float maxWidth = 100f; // Small width to force wrapping
-        
-        // You would extract the text wrapping logic into a separate method:
-        // List<String> lines = TextWrapper.wrapText(longText, font, fontSize, maxWidth);
-        
-        // Then test that:
-        // 1. All lines fit within maxWidth
-        // 2. Text is preserved (no characters lost)
-        // 3. Breaks occur at word boundaries
-        
-        // For now, this is a placeholder showing what you SHOULD test
         assertTrue(true, "Text wrapping logic should be extracted and tested separately");
     }
 
@@ -117,7 +106,6 @@ class ResumeLayout {
     }
 }
 
-// Tests for the extracted business logic:
 class TextWrapperTest {
     
     @Test

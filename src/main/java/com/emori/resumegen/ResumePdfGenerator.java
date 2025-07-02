@@ -12,7 +12,8 @@ import java.util.List;
 
 public class ResumePdfGenerator {
 
-    public static final String DEST = "Emori_Renan_Hideki_Resume_PDFBox.pdf";
+    public static final String DEST = "Emori_Renan_Hideki_Resume.pdf";
+    private static final float PAGE_BOTTOM_MARGIN = 40; // Adjust as needed
 
     public static void main(String[] args) {
         PDDocument document = null;
@@ -21,96 +22,209 @@ public class ResumePdfGenerator {
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
 
-            // Use try-with-resources to ensure contentStream is closed properly
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-                // Define fonts
-                PDType1Font regularFont = PDType1Font.HELVETICA;
-                PDType1Font boldFont = PDType1Font.HELVETICA_BOLD;
+            PDType1Font regularFont = PDType1Font.HELVETICA;
+            PDType1Font boldFont = PDType1Font.HELVETICA_BOLD;
 
-                float currentY = page.getMediaBox().getHeight() - 40; // Start Y from top
-                float margin = 50; // Left and right margin
-                float width = page.getMediaBox().getWidth() - 2 * margin;
+            float currentY = page.getMediaBox().getHeight() - 40;
+            float margin = 50;
+            float width = page.getMediaBox().getWidth() - 2 * margin;
 
-                // --- Header Section ---
-                // Name (Keeping 24pt, as it's a primary heading)
-                contentStream.beginText();
-                contentStream.setFont(boldFont, 24);
-                String name = "Emori Renan Hideki";
-                float nameWidth = boldFont.getStringWidth(name) / 1000 * 24;
-                float nameX = (page.getMediaBox().getWidth() - nameWidth) / 2;
-                contentStream.newLineAtOffset(nameX, currentY);
-                contentStream.showText(name);
-                contentStream.endText();
-                currentY -= 30; // Space after name
+            // Header
+            contentStream.beginText();
+            contentStream.setFont(boldFont, 24);
+            String name = "Emori Renan Hideki";
+            float nameWidth = boldFont.getStringWidth(name) / 1000 * 24;
+            float nameX = (page.getMediaBox().getWidth() - nameWidth) / 2;
+            contentStream.newLineAtOffset(nameX, currentY);
+            contentStream.showText(name);
+            contentStream.endText();
+            currentY -= 30;
 
-                // Contact Info (Reduced to 9pt)
-                contentStream.beginText();
-                contentStream.setFont(regularFont, 9); // Adjusted font size
-                String contactInfo = "Asakusa, Tokyo, Japan | 0903873065 | renanemori@gmail.com | https://github.com/Emori-Renan";
-                float contactInfoWidth = regularFont.getStringWidth(contactInfo) / 1000 * 9; // Adjusted font size
-                float contactInfoX = (page.getMediaBox().getWidth() - contactInfoWidth) / 2;
-                contentStream.newLineAtOffset(contactInfoX, currentY);
-                contentStream.showText(contactInfo);
-                contentStream.endText();
-                currentY -= 30; // Space after contact info
+            // Contact Info
+            contentStream.beginText();
+            contentStream.setFont(regularFont, 9);
+            String contactInfo = "Asakusa, Tokyo, Japan | 09038730665 | renanemori@gmail.com | https://github.com/Emori-Renan";
+            float contactInfoWidth = regularFont.getStringWidth(contactInfo) / 1000 * 9;
+            float contactInfoX = (page.getMediaBox().getWidth() - contactInfoWidth) / 2;
+            contentStream.newLineAtOffset(contactInfoX, currentY);
+            contentStream.showText(contactInfo);
+            contentStream.endText();
+            currentY -= 30;
 
-                // --- Summary ---
-                currentY = addSection(contentStream, "Summary", boldFont, 12, regularFont, 9, currentY, margin); // Adjusted section title size
-                currentY = addParagraph(contentStream,
-                        "Highly motivated and detail-oriented aspiring software developer with a strong foundation in backend development, web technologies, and a passion for clean code, Test-Driven Development (TDD), and Object-Oriented Programming (OOP). Currently pursuing a System Analysis and Development degree, I bring hands-on experience in Java, Vue, Python, PostgreSQL, and modern development practices. Eager to leverage my skills and self-taught knowledge to contribute to the IT market in Japan.",
-                        regularFont, 10, currentY, margin, width); // Adjusted paragraph font size
+            // --- Summary ---
+            Object[] result = addSection(document, contentStream, "Summary", boldFont, 12, regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // --- Education ---
-                currentY = addSection(contentStream, "Education", boldFont, 12, regularFont, 9, currentY, margin); // Adjusted section title size
-                currentY = addParagraph(contentStream, "System Analysis and Development University Course", boldFont, 10, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Unicv (Brazil)", regularFont, 10, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Expected Completion: 2025 | Enrolled: 2023", regularFont, 9, currentY, margin, width); // Adjusted font size
+            result = addParagraph(document, contentStream,
+             "Junior Fullstack Developer with hands-on experience building robust web applications using Java, Spring Boot, and Vue.js. Passionate about clean code, test-driven development, and Agile methodologies. Currently pursuing a degree in System Analysis and Development. Known for self-learning, problem-solving, and delivering backend-focused features with frontend integration." 
+             , regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // --- Experience ---
-                currentY = addSection(contentStream, "Experience", boldFont, 12, regularFont, 9, currentY, margin); // Adjusted section title size
+            // --- Education ---
+            result = addSection(document, contentStream, "Education", boldFont, 12, regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // Freelance Developer
-                currentY = addParagraph(contentStream, "Freelance Developer", boldFont, 10, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Remote | January 2025", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "Developed an automated bot for account creation using Python, Flet, and Selenium, implementing end-to-end logic.", regularFont, 9, currentY, margin, width); // Adjusted font size
+            result = addParagraph(document, contentStream, "System Analysis and Development University Course", boldFont, 10, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // Programmer at Lode
-                currentY = addParagraph(contentStream, "Programmer", boldFont, 10, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Lode | Brazil | September 2023 – July 2024", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "Developed and maintained a website using Java and Vue, serving as a mini-version of the company's main Java Swing product.", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "Performed bug solving, improvements, and new feature development for the application, with a strong focus on backend enhancements.", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "Utilized PostgreSQL for database management and implemented features with a focus on clean code principles.", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "Collaborated effectively with the QA team, Support team, and Marketing team to improve the ongoing project.", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "Collaborated within an Agile Scrum environment, utilizing Jira for project management and Git for version control.", regularFont, 9, currentY, margin, width); // Adjusted font size
+            result = addParagraph(document, contentStream, "Unicv (Brazil)", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // --- Skills ---
-                currentY = addSection(contentStream, "Skills", boldFont, 12, regularFont, 9, currentY, margin); // Adjusted section title size
-                currentY = addParagraph(contentStream, "Programming Languages: Java, Python, JavaScript (Vue, Next.js)", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Web Technologies: Vue.js, Next.js, HTML, CSS, RESTful APIs", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Databases: PostgreSQL, Supabase", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Tools & Methodologies: Git, Jira, Scrum, Selenium, Flet, Test-Driven Development (TDD), Object-Oriented Programming (OOP)", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Concepts: Clean Code, Clean Architecture, Test-Driven Development (TDD), Object-Oriented Programming (OOP)", regularFont, 9, currentY, margin, width); // Adjusted font size
+            result = addParagraph(document, contentStream, "Expected Completion: 2025 | Enrolled: 2023", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // --- Personal Projects & Interests ---
-                currentY = addSection(contentStream, "Personal Projects & Interests", boldFont, 12, regularFont, 9, currentY, margin); // Adjusted section title size
-                currentY = addListItem(contentStream, "Employee Management System with Invoice Generator: Developing a full-stack application using Next.js for the frontend and Java for the backend, including an automated invoice generation feature.", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "AI Chatbot for Recommendations: Currently developing a Python-based chatbot that recommends movies and anime using a custom dataset.", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "LeetCode & Codewars: Actively practice problem-solving and algorithm development in Java.", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addListItem(contentStream, "Continuous Learning: Dedicated to self-improvement through reading industry-standard books (e.g., Clean Code, Clean Architecture, TDD).", regularFont, 9, currentY, margin, width); // Adjusted font size
+            // --- Experience ---
+            result = addSection(document, contentStream, "Experience", boldFont, 12, regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // --- Languages ---
-                currentY = addSection(contentStream, "Languages", boldFont, 12, regularFont, 9, currentY, margin); // Adjusted section title size
-                currentY = addParagraph(contentStream, "English: Fluent", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Japanese: Basic", regularFont, 9, currentY, margin, width); // Adjusted font size
+            // Programmer at Lode
+            result = addParagraph(document, contentStream, "Fullstack Software Engineer", boldFont, 10, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-                // --- Additional Information ---
-                currentY = addSection(contentStream, "Additional Information", boldFont, 12, regularFont, 9, currentY, margin); // Adjusted section title size
-                currentY = addParagraph(contentStream, "Age: 27", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Residency: Asakusa, Tokyo, Japan", regularFont, 9, currentY, margin, width); // Adjusted font size
-                currentY = addParagraph(contentStream, "Passionate about continuous learning and self-improvement, with a keen eye for detail.", regularFont, 9, currentY, margin, width); // Adjusted font size
+            result = addParagraph(document, contentStream, "Lode | Brazil | September 2023 – July 2024", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
 
-            } // contentStream is implicitly closed here
+            result = addListItem(document, contentStream, "Recreated the company’s desktop product as a responsive web application using Java and Vue.js, reducing support requests by 30%.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, " Refactored backend services and implemented new features following Clean Code and TDD principles.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "Diagnosed and resolved bugs in production and staging environments, often coordinating closely with QA.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "Conducted code reviews, ensured adherence to development standards, and managed merge requests to prepare for version releases.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "Designed and optimized PostgreSQL queries for user management features, following Clean Code principles for long-term scalability.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "Worked cross-functionally with the Support, Design and Marketing teams and delivered in an Agile/Scrum workflow using Jira, Git, and Figma.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+            
+            // Freelance Developer
+            result = addParagraph(document, contentStream, "Freelance Developer", boldFont, 10, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Remote | January 2025", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "Collaborated with two other developers to build a desktop automation tool using Python, Flet, Selenium and supabase postgresql database, packaged as an executable application.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, " Engineered an advanced account creation bot designed to simulate real-user behavior, opening multiple browser tabs to handle VPN routing, CAPTCHA solving, and security bypass techniques.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+            
+            result = addListItem(document, contentStream, "Implemented robust logic for automating user flows resembling end-to-end tests, ensuring reliability and scalability under diverse network conditions.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+            
+            // --- Skills ---
+            result = addSection(document, contentStream, "Skills", boldFont, 12, regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Backend: Java (Spring Boot), Python (Selenium, Flet)", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Frontend: Vue 3 (Composition API), Javascript, Typescript, Next.js, React, HTML, CSS", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Dev Tools: Git, Docker, Jira, Figma", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Testing: TDD, JUnit, Jest, Selenium", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Database: PostgreSQL, Supabase", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Practices: Clean Code, Agile/Scrum, OOP", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            // --- Personal Projects & Interests ---
+            result = addSection(document, contentStream, "Personal Projects & Interests", boldFont, 12, regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "Employee Management System – Fullstack app (Next.js (Typescript) + Java Spring Boot) with dynamic invoice generation and Dockerized deployment.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "AI Chatbot – Python-based recommendation system using custom dataset of anime and movies.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "LeetCode & Codewars: Actively practice problem-solving and algorithm development in Java.", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addListItem(document, contentStream, "Continuous Learning: Dedicated to self-improvement through reading industry-standard books (e.g., Clean Code, Clean Architecture, TDD, Microservices with Spring boot).", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            // --- Languages ---
+            result = addSection(document, contentStream, "Languages", boldFont, 12, regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "English: Fluent", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Japanese: Basic", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Portuguese: Fluent", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            // --- Additional Information ---
+            result = addSection(document, contentStream, "Additional Information", boldFont, 12, regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Age: 27", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            result = addParagraph(document, contentStream, "Residency: Asakusa, Tokyo, Japan", regularFont, 10.5f, currentY, margin, width);
+            currentY = (float) result[0];
+            contentStream = (PDPageContentStream) result[1];
+
+            // result = addParagraph(document, contentStream, "Passionate about continuous learning and self-improvement, with a keen eye for detail.", regularFont, 10.5f, currentY, margin, width);
+            // currentY = (float) result[0];
+            // contentStream = (PDPageContentStream) result[1];
+
+            contentStream.close(); // Close the last content stream
 
             document.save(DEST);
             System.out.println("Resume PDF generated successfully at: " + DEST);
@@ -129,32 +243,36 @@ public class ResumePdfGenerator {
         }
     }
 
-    /**
-     * Helper to add a section title and a line.
-     * @return new Y position
-     */
-    public static float addSection(PDPageContentStream contentStream, String title, PDType1Font font, float fontSize, PDType1Font lineFont, float lineFontSize, float currentY, float margin) throws IOException {
-        currentY -= 15; // Space before new section (reduced from 20)
+    // --- Helper Methods ---
+
+    // Updated to return an Object array containing {currentY, newContentStream}
+    public static Object[] addSection(PDDocument document, PDPageContentStream contentStream, String title, PDType1Font font, float fontSize, PDType1Font lineFont, float lineFontSize, float currentY, float margin, float width) throws IOException {
+        float requiredSpace = fontSize + 3 + 12 + 15; // Space for title, line, and gap before next content
+        if (currentY - requiredSpace < PAGE_BOTTOM_MARGIN) {
+            contentStream.close();
+            PDPage newPage = new PDPage(PDRectangle.A4);
+            document.addPage(newPage);
+            contentStream = new PDPageContentStream(document, newPage);
+            currentY = newPage.getMediaBox().getHeight() - 40; // Reset Y for new page
+        }
+
+        currentY -= 15;
         contentStream.beginText();
         contentStream.setFont(font, fontSize);
         contentStream.newLineAtOffset(margin, currentY);
         contentStream.showText(title);
         contentStream.endText();
-        currentY -= fontSize + 3; // Space after title (reduced from 5)
+        currentY -= fontSize + 3;
 
-        // Draw line
         contentStream.moveTo(margin, currentY);
-        contentStream.lineTo(margin + 500, currentY); // Line length
+        contentStream.lineTo(margin + width, currentY);
         contentStream.stroke();
-        currentY -= 8; // Space after line (reduced from 10)
-        return currentY;
+        currentY -= 12;
+        return new Object[]{currentY, contentStream};
     }
 
-    /**
-     * Helper to add a paragraph with basic word wrapping.
-     * @return new Y position
-     */
-    public static float addParagraph(PDPageContentStream contentStream, String text, PDType1Font font, float fontSize, float currentY, float margin, float width) throws IOException {
+    // Updated to return an Object array containing {currentY, newContentStream}
+    public static Object[] addParagraph(PDDocument document, PDPageContentStream contentStream, String text, PDType1Font font, float fontSize, float currentY, float margin, float width) throws IOException {
         List<String> lines = new ArrayList<>();
         int lastSpace = -1;
         String remainingText = text;
@@ -180,33 +298,31 @@ public class ResumePdfGenerator {
         }
 
         for (String line : lines) {
+            float lineHeight = fontSize + 2.5f;
+            if (currentY - lineHeight < PAGE_BOTTOM_MARGIN) {
+                contentStream.close();
+                PDPage newPage = new PDPage(PDRectangle.A4);
+                document.addPage(newPage);
+                contentStream = new PDPageContentStream(document, newPage);
+                currentY = newPage.getMediaBox().getHeight() - 40;
+            }
             contentStream.beginText();
             contentStream.setFont(font, fontSize);
             contentStream.newLineAtOffset(margin, currentY);
             contentStream.showText(line);
             contentStream.endText();
-            currentY -= fontSize + 1; // Line spacing (reduced from 2)
+            currentY -= lineHeight;
         }
-        currentY -= 3; // Space after paragraph (reduced from 5)
-        return currentY;
+        currentY -= 7;
+        return new Object[]{currentY, contentStream};
     }
 
-    /**
-     * Helper to add a list item with a bullet point.
-     * @return new Y position
-     */
-    public static float addListItem(PDPageContentStream contentStream, String text, PDType1Font font, float fontSize, float currentY, float margin, float width) throws IOException {
+    // Updated to return an Object array containing {currentY, newContentStream}
+    public static Object[] addListItem(PDDocument document, PDPageContentStream contentStream, String text, PDType1Font font, float fontSize, float currentY, float margin, float width) throws IOException {
         float bulletIndent = 15;
         float textIndent = 25;
 
-        // Draw bullet
-        contentStream.beginText();
-        contentStream.setFont(font, fontSize);
-        contentStream.newLineAtOffset(margin + bulletIndent, currentY);
-        contentStream.showText("• ");
-        contentStream.endText();
-
-        // Add text, with wrapping
+        // Calculate lines for the list item to check for page break before drawing anything
         List<String> lines = new ArrayList<>();
         int lastSpace = -1;
         String remainingText = text;
@@ -231,6 +347,23 @@ public class ResumePdfGenerator {
             }
         }
 
+        float requiredSpace = (fontSize + 2.5f) * lines.size() + 7; // Total height for the list item + gap
+        if (currentY - requiredSpace < PAGE_BOTTOM_MARGIN) {
+            contentStream.close();
+            PDPage newPage = new PDPage(PDRectangle.A4);
+            document.addPage(newPage);
+            contentStream = new PDPageContentStream(document, newPage);
+            currentY = newPage.getMediaBox().getHeight() - 40;
+        }
+
+        // Draw bullet
+        contentStream.beginText();
+        contentStream.setFont(font, fontSize);
+        contentStream.newLineAtOffset(margin + bulletIndent, currentY);
+        contentStream.showText("• ");
+        contentStream.endText();
+
+        // Add text, with wrapping
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             contentStream.beginText();
@@ -238,9 +371,9 @@ public class ResumePdfGenerator {
             contentStream.newLineAtOffset(margin + textIndent, currentY);
             contentStream.showText(line);
             contentStream.endText();
-            currentY -= fontSize + 1; // Line spacing (reduced from 2)
+            currentY -= fontSize + 2.5f;
         }
-        currentY -= 3; // Space after list item (reduced from 5)
-        return currentY;
+        currentY -= 7;
+        return new Object[]{currentY, contentStream};
     }
 }
